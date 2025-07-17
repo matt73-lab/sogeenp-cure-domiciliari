@@ -323,7 +323,137 @@ export default function Operatori() {
                   </div>
                   {selectedOperatore.specializzazioni.length > 0 && (
                     <div>
-                      <span className="text-green-700 font-medium">Specializzazioni:</span>
+                      <span className="text-gray-500 text-sm">Data scadenza:</span>
+                      <p className="font-medium">{formatDate(selectedOperatore.fascicolo.blsd.dataScadenza)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 text-sm">Livello:</span>
+                      <p className="font-medium">{selectedOperatore.fascicolo.blsd.livello || 'Da inserire'}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 text-sm">Ente formatore:</span>
+                      <p className="font-medium">{selectedOperatore.fascicolo.blsd.ente || 'Da inserire'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-between items-center">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      selectedOperatore.fascicolo.blsd.stato === 'Non richiesto' 
+                        ? 'bg-gray-100 text-gray-600' 
+                        : getStatoDocumento(selectedOperatore.fascicolo.blsd.dataScadenza).color
+                    }`}>
+                      {selectedOperatore.fascicolo.blsd.stato === 'Non richiesto' ? 'Non richiesto' : getStatoDocumento(selectedOperatore.fascicolo.blsd.dataScadenza).stato}
+                    </span>
+                    {selectedOperatore.fascicolo.blsd.stato !== 'Non richiesto' && (
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" icon="📁">
+                          {selectedOperatore.fascicolo.blsd.file ? 'Visualizza' : 'Carica'}
+                        </Button>
+                        <Button size="sm" variant="secondary" icon="✏️">
+                          Aggiorna
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Procedure Interne */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-3">📋 Formazione Procedure Interne</h3>
+                <div className="space-y-3">
+                  {selectedOperatore.fascicolo.procedureInterne.length > 0 ? (
+                    selectedOperatore.fascicolo.procedureInterne.map((procedura, index) => (
+                      <div key={index} className="bg-white p-4 rounded border">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="font-medium">{procedura.procedura}</p>
+                            <p className="text-sm text-gray-600">Formatore: {procedura.formatore}</p>
+                            <p className="text-sm text-gray-600">
+                              Data: {formatDate(procedura.dataFormazione)} - Ore: {procedura.ore}
+                            </p>
+                          </div>
+                          <Button size="sm" variant="outline" icon="📁">
+                            {procedura.file ? 'Visualizza' : 'Carica'}
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="bg-white p-4 rounded border text-center text-gray-500">
+                      <p>Nessuna formazione su procedure interne registrata</p>
+                      <Button size="sm" variant="primary" icon="➕" className="mt-2">
+                        Aggiungi Formazione
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Patente */}
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h3 className="font-semibold mb-3">🚗 Patente di Guida</h3>
+                <div className="bg-white p-4 rounded border">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-gray-500 text-sm">Numero patente:</span>
+                      <p className="font-medium">{selectedOperatore.fascicolo.patente.numero || 'Da inserire'}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 text-sm">Categoria:</span>
+                      <p className="font-medium">{selectedOperatore.fascicolo.patente.categoria || 'Da inserire'}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 text-sm">Data rilascio:</span>
+                      <p className="font-medium">{formatDate(selectedOperatore.fascicolo.patente.dataRilascio)}</p>
+                    </div>
+                    <div>
+                      <span className="text-gray-500 text-sm">Data scadenza:</span>
+                      <p className="font-medium">{formatDate(selectedOperatore.fascicolo.patente.dataScadenza)}</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-between items-center">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatoDocumento(selectedOperatore.fascicolo.patente.dataScadenza).color}`}>
+                      {getStatoDocumento(selectedOperatore.fascicolo.patente.dataScadenza).stato}
+                    </span>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline" icon="📁">
+                        {selectedOperatore.fascicolo.patente.file ? 'Visualizza' : 'Carica'}
+                      </Button>
+                      <Button size="sm" variant="secondary" icon="✏️">
+                        Aggiorna
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Azioni Fascicolo */}
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="font-semibold text-blue-800">Azioni Fascicolo</h3>
+                    <p className="text-blue-700 text-sm">Gestione documenti e compliance</p>
+                  </div>
+                  <div className="flex space-x-2">
+                    <Button variant="primary" icon="📥">
+                      Esporta Fascicolo PDF
+                    </Button>
+                    <Button variant="secondary" icon="🔄">
+                      Aggiorna Scadenze
+                    </Button>
+                    <Button variant="outline" icon="📧">
+                      Notifica Scadenze
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}text-green-700 font-medium">Specializzazioni:</span>
                       <div className="flex flex-wrap gap-2 mt-1">
                         {selectedOperatore.specializzazioni.map((spec, index) => (
                           <span key={index} className="bg-white border border-green-200 px-2 py-1 rounded text-sm">
