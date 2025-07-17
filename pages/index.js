@@ -1,4 +1,4 @@
-// pages/index.js - App Principale SOGEENP
+// pages/index.js - Dashboard Principale SOGEENP
 import React, { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
@@ -7,125 +7,265 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Icona semplice
-const UserIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-    <circle cx="12" cy="7" r="4"/>
+// === ICONE MODULI ===
+const UserIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
   </svg>
 );
 
-export default function HomePage() {
-  const [operatori, setOperatori] = useState([]);
-  const [assistiti, setAssistiti] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [connectionStatus, setConnectionStatus] = useState('⏳ Connessione...');
-  
-  // Nuovo assistito form
-  const [showForm, setShowForm] = useState(false);
-  const [newAssistito, setNewAssistito] = useState({
-    nome: '',
-    cognome: '',
-    codice_fiscale: '',
-    telefono_principale: ''
-  });
+const FileTextIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/>
+  </svg>
+);
 
-  // Test connessione e caricamento dati
+const HeartIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.29 1.51 4.04 3 5.5l7 7Z"/>
+  </svg>
+);
+
+const BookOpenIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+  </svg>
+);
+
+const StethoscopeIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/>
+  </svg>
+);
+
+const FolderIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z"/>
+  </svg>
+);
+
+const GraduationCapIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>
+  </svg>
+);
+
+const ShieldAlertIcon = ({ className = "w-6 h-6" }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/>
+  </svg>
+);
+
+// === COMPONENTE CARD MODULO ===
+const ModuleCard = ({ title, description, icon, count, status, color, onClick, disabled = false }) => {
+  const cardStyle = {
+    background: disabled ? 'rgba(100, 100, 100, 0.1)' : 'rgba(255,255,255,0.1)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '20px',
+    padding: '25px',
+    border: disabled ? '1px solid rgba(100, 100, 100, 0.2)' : '1px solid rgba(255,255,255,0.2)',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    transition: 'all 0.3s ease',
+    opacity: disabled ? 0.6 : 1
+  };
+
+  const hoverStyle = !disabled ? {
+    transform: 'translateY(-5px)',
+    background: 'rgba(255,255,255,0.15)'
+  } : {};
+
+  return (
+    <div 
+      style={cardStyle}
+      onClick={!disabled ? onClick : null}
+      onMouseEnter={(e) => !disabled && Object.assign(e.target.style, hoverStyle)}
+      onMouseLeave={(e) => !disabled && Object.assign(e.target.style, cardStyle)}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '15px' }}>
+        <div style={{ 
+          width: '60px', 
+          height: '60px', 
+          background: `${color}20`, 
+          borderRadius: '15px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center',
+          color: color
+        }}>
+          {icon}
+        </div>
+        {count !== undefined && (
+          <div style={{ 
+            fontSize: '2.5rem', 
+            fontWeight: 'bold', 
+            color: color
+          }}>
+            {count}
+          </div>
+        )}
+      </div>
+      
+      <h3 style={{ 
+        color: 'white', 
+        fontSize: '1.3rem', 
+        fontWeight: 'bold', 
+        marginBottom: '8px' 
+      }}>
+        {title}
+      </h3>
+      
+      <p style={{ 
+        color: 'rgba(255,255,255,0.7)', 
+        fontSize: '0.9rem', 
+        marginBottom: '12px',
+        lineHeight: '1.4'
+      }}>
+        {description}
+      </p>
+      
+      {status && (
+        <div style={{ 
+          display: 'inline-block',
+          background: disabled ? '#6B7280' : status === 'Attivo' ? '#10B981' : '#F59E0B',
+          color: 'white',
+          padding: '4px 12px',
+          borderRadius: '12px',
+          fontSize: '0.8rem',
+          fontWeight: 'bold'
+        }}>
+          {disabled ? 'Prossimamente' : status}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// === COMPONENTE PRINCIPALE ===
+export default function Dashboard() {
+  const [stats, setStats] = useState({
+    operatori: 0,
+    assistiti: 0,
+    fascicoli: 0,
+    accessi: 0,
+    documenti: 0
+  });
+  const [loading, setLoading] = useState(true);
+  const [connectionStatus, setConnectionStatus] = useState('⏳ Caricamento...');
+
+  // === CARICAMENTO DATI ===
   useEffect(() => {
-    testConnection();
+    loadDashboardData();
   }, []);
 
-  const testConnection = async () => {
+  const loadDashboardData = async () => {
     try {
       setLoading(true);
-      setConnectionStatus('🔄 Testando connessione Supabase...');
-      
-      // Test connessione caricando operatori
-      const { data: operatoriData, error: operatoriError } = await supabase
-        .from('operatori')
-        .select('*')
-        .order('level', { ascending: false });
-      
-      if (operatoriError) throw operatoriError;
-      
-      setOperatori(operatoriData || []);
-      setConnectionStatus('✅ Connesso a Supabase!');
-      
-      // Carica assistiti
-      const { data: assistitiData, error: assistitiError } = await supabase
-        .from('assistiti')
-        .select('*')
-        .order('cognome', { ascending: true });
-      
-      if (assistitiError) throw assistitiError;
-      setAssistiti(assistitiData || []);
-      
-      console.log('✅ Dati caricati:', {
-        operatori: operatoriData?.length || 0,
-        assistiti: assistitiData?.length || 0
+      setConnectionStatus('🔄 Caricamento statistiche...');
+
+      // Carica conteggi da tutte le tabelle
+      const [operatoriRes, assistitiRes, fascicoliRes, accessiRes] = await Promise.all([
+        supabase.from('operatori').select('id', { count: 'exact' }),
+        supabase.from('assistiti').select('id', { count: 'exact' }),
+        supabase.from('fascicoli_sanitari_domiciliari').select('id', { count: 'exact' }),
+        supabase.from('accessi_domiciliari').select('id', { count: 'exact' })
+      ]);
+
+      setStats({
+        operatori: operatoriRes.count || 0,
+        assistiti: assistitiRes.count || 0,
+        fascicoli: fascicoliRes.count || 0,
+        accessi: accessiRes.count || 0,
+        documenti: 0 // TODO: implementare tabella documenti
       });
-      
+
+      setConnectionStatus('✅ Dashboard aggiornata');
     } catch (error) {
-      console.error('❌ Errore connessione:', error);
+      console.error('❌ Errore caricamento dashboard:', error);
       setConnectionStatus('❌ Errore: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAddAssistito = async (e) => {
-    e.preventDefault();
-    
-    if (!newAssistito.nome || !newAssistito.cognome || !newAssistito.codice_fiscale) {
-      alert('Nome, Cognome e Codice Fiscale sono obbligatori');
-      return;
-    }
-
-    try {
-      const { data, error } = await supabase
-        .from('assistiti')
-        .insert([{
-          nome: newAssistito.nome,
-          cognome: newAssistito.cognome,
-          codice_fiscale: newAssistito.codice_fiscale.toUpperCase(),
-          telefono_principale: newAssistito.telefono_principale,
-          created_at: new Date().toISOString()
-        }])
-        .select()
-        .single();
-
-      if (error) throw error;
-      
-      setAssistiti(prev => [...prev, data]);
-      setNewAssistito({ nome: '', cognome: '', codice_fiscale: '', telefono_principale: '' });
-      setShowForm(false);
-      alert('✅ Assistito aggiunto con successo! I dati sono salvati permanentemente.');
-      
-    } catch (error) {
-      console.error('❌ Errore aggiunta assistito:', error);
-      alert('❌ Errore: ' + error.message);
-    }
+  // === NAVIGAZIONE MODULI ===
+  const handleModuleClick = (moduleId) => {
+    alert(`🚧 Modulo "${moduleId}" in sviluppo.\nProssimamente implementeremo la navigazione completa!`);
+    // TODO: Implementare routing tra moduli
   };
 
-  const handleDeleteAssistito = async (id) => {
-    if (!confirm('Sei sicuro di voler eliminare questo assistito?')) return;
-
-    try {
-      const { error } = await supabase
-        .from('assistiti')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      
-      setAssistiti(prev => prev.filter(a => a.id !== id));
-      alert('✅ Assistito eliminato');
-      
-    } catch (error) {
-      console.error('❌ Errore eliminazione:', error);
-      alert('❌ Errore: ' + error.message);
+  // === DEFINIZIONE MODULI ===
+  const modules = [
+    {
+      id: 'assistiti',
+      title: 'Assistiti',
+      description: 'Gestione anagrafica e stato assistiti in carico alla centrale operativa.',
+      icon: <UserIcon />,
+      count: stats.assistiti,
+      status: 'Attivo',
+      color: '#3B82F6',
+      disabled: false
+    },
+    {
+      id: 'fascicolo',
+      title: 'Fascicolo Sanitario',
+      description: 'Fascicoli sanitari domiciliari completi con valutazioni e piani di cura.',
+      icon: <FileTextIcon />,
+      count: stats.fascicoli,
+      status: 'Attivo',
+      color: '#10B981',
+      disabled: false
+    },
+    {
+      id: 'diario',
+      title: 'Diario Assistenziale', 
+      description: 'Registrazione accessi domiciliari con firme digitali e parametri vitali.',
+      icon: <BookOpenIcon />,
+      count: stats.accessi,
+      status: 'Attivo',
+      color: '#F59E0B',
+      disabled: false
+    },
+    {
+      id: 'operatori',
+      title: 'Operatori',
+      description: 'Gestione équipe operatori con fascicoli personali e formazione ECM.',
+      icon: <StethoscopeIcon />,
+      count: stats.operatori,
+      status: 'Attivo',
+      color: '#8B5CF6',
+      disabled: false
+    },
+    {
+      id: 'documentazione',
+      title: 'Documentazione',
+      description: 'Repository procedure, linee guida e protocolli con storage file integrato.',
+      icon: <FolderIcon />,
+      count: stats.documenti,
+      status: 'In Sviluppo',
+      color: '#EF4444',
+      disabled: true
+    },
+    {
+      id: 'formazione',
+      title: 'Formazione',
+      description: 'Sistema formazione automatizzato con test AI generati dai documenti.',
+      icon: <GraduationCapIcon />,
+      count: 0,
+      status: 'In Sviluppo',
+      color: '#EC4899',
+      disabled: true
+    },
+    {
+      id: 'rischio',
+      title: 'Rischio Clinico',
+      description: 'Gestione eventi avversi, near miss e sistema qualità per compliance.',
+      icon: <ShieldAlertIcon />,
+      count: 0,
+      status: 'In Sviluppo',
+      color: '#06B6D4',
+      disabled: true
     }
-  };
+  ];
 
   return (
     <div style={{ 
@@ -134,329 +274,144 @@ export default function HomePage() {
       padding: '20px',
       fontFamily: 'system-ui, -apple-system, sans-serif'
     }}>
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-        {/* Header */}
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+        
+        {/* === HEADER DASHBOARD === */}
         <div style={{ 
           background: 'rgba(255,255,255,0.1)', 
           backdropFilter: 'blur(10px)',
-          borderRadius: '20px', 
-          padding: '30px', 
-          marginBottom: '30px',
-          border: '1px solid rgba(255,255,255,0.2)'
+          borderRadius: '25px', 
+          padding: '40px', 
+          marginBottom: '40px',
+          border: '1px solid rgba(255,255,255,0.2)',
+          textAlign: 'center'
         }}>
           <h1 style={{ 
             color: 'white', 
-            fontSize: '3rem', 
+            fontSize: '3.5rem', 
             fontWeight: 'bold', 
-            marginBottom: '10px',
-            textAlign: 'center'
+            marginBottom: '15px'
           }}>
             🏥 Centrale Operativa SOGEENP
           </h1>
           <p style={{ 
             color: 'rgba(255,255,255,0.8)', 
-            fontSize: '1.2rem', 
-            textAlign: 'center',
-            marginBottom: '20px'
+            fontSize: '1.4rem', 
+            marginBottom: '25px'
           }}>
-            Sistema Gestione Cure Domiciliari - Versione 1.0
+            Dashboard Gestione Cure Domiciliari - MVP v1.0
           </p>
           
-          {/* Status connessione */}
+          {/* Status e KPI rapidi */}
           <div style={{ 
             background: 'rgba(0,0,0,0.2)', 
-            padding: '15px', 
-            borderRadius: '10px',
-            textAlign: 'center'
+            padding: '20px', 
+            borderRadius: '15px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px',
+            alignItems: 'center'
           }}>
-            <p style={{ color: 'white', margin: 0, fontSize: '1.1rem' }}>
-              {connectionStatus}
-            </p>
-            {!loading && (
-              <p style={{ color: 'rgba(255,255,255,0.7)', margin: '5px 0 0 0', fontSize: '0.9rem' }}>
-                Database attivo • Operatori: {operatori.length} • Assistiti: {assistiti.length}
+            <div>
+              <p style={{ color: 'white', margin: 0, fontSize: '1.2rem', fontWeight: 'bold' }}>
+                {connectionStatus}
               </p>
+            </div>
+            
+            {!loading && (
+              <>
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#3B82F6', fontSize: '2rem', fontWeight: 'bold' }}>{stats.operatori}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Operatori Attivi</div>
+                </div>
+                
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#10B981', fontSize: '2rem', fontWeight: 'bold' }}>{stats.assistiti}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Assistiti in Carico</div>
+                </div>
+                
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#F59E0B', fontSize: '2rem', fontWeight: 'bold' }}>{stats.fascicoli}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Fascicoli Aperti</div>
+                </div>
+                
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ color: '#8B5CF6', fontSize: '2rem', fontWeight: 'bold' }}>{stats.accessi}</div>
+                  <div style={{ color: 'rgba(255,255,255,0.7)', fontSize: '0.9rem' }}>Accessi Registrati</div>
+                </div>
+              </>
             )}
           </div>
         </div>
 
+        {/* === GRIGLIA MODULI === */}
         {loading ? (
           <div style={{ textAlign: 'center', color: 'white', fontSize: '1.5rem' }}>
             <div style={{ 
-              width: '50px', 
-              height: '50px', 
+              width: '60px', 
+              height: '60px', 
               border: '4px solid rgba(255,255,255,0.3)',
               borderTop: '4px solid white',
               borderRadius: '50%',
               animation: 'spin 1s linear infinite',
               margin: '0 auto 20px'
             }}></div>
-            Caricamento dati...
+            Caricamento moduli...
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '30px' }}>
+          <>
+            <h2 style={{ 
+              color: 'white', 
+              fontSize: '2rem', 
+              fontWeight: 'bold', 
+              marginBottom: '30px',
+              textAlign: 'center'
+            }}>
+              📋 Moduli Sistema
+            </h2>
             
-            {/* Sezione Operatori */}
             <div style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              backdropFilter: 'blur(10px)',
-              borderRadius: '20px', 
-              padding: '25px',
-              border: '1px solid rgba(255,255,255,0.2)'
+              display: 'grid', 
+              gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', 
+              gap: '25px' 
             }}>
-              <h2 style={{ color: 'white', fontSize: '1.8rem', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <UserIcon />
-                Operatori SOGEENP ({operatori.length})
-              </h2>
-              
-              <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {operatori.map(operatore => (
-                  <div key={operatore.id} style={{ 
-                    background: 'rgba(255,255,255,0.1)', 
-                    borderRadius: '10px', 
-                    padding: '15px', 
-                    marginBottom: '10px',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <h3 style={{ color: 'white', margin: '0 0 5px 0', fontSize: '1.1rem' }}>
-                          {operatore.nome} {operatore.cognome}
-                        </h3>
-                        <p style={{ color: 'rgba(255,255,255,0.7)', margin: 0, fontSize: '0.9rem' }}>
-                          {operatore.qualifica} • {operatore.codice_operatore}
-                        </p>
-                      </div>
-                      <div style={{ 
-                        background: operatore.level >= 4 ? '#10B981' : operatore.level >= 2 ? '#3B82F6' : '#6B7280',
-                        color: 'white',
-                        padding: '5px 10px',
-                        borderRadius: '20px',
-                        fontSize: '0.8rem',
-                        fontWeight: 'bold'
-                      }}>
-                        L{operatore.level}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {modules.map(module => (
+                <ModuleCard
+                  key={module.id}
+                  title={module.title}
+                  description={module.description}
+                  icon={module.icon}
+                  count={module.count}
+                  status={module.status}
+                  color={module.color}
+                  disabled={module.disabled}
+                  onClick={() => handleModuleClick(module.id)}
+                />
+              ))}
             </div>
-
-            {/* Sezione Assistiti */}
-            <div style={{ 
-              background: 'rgba(255,255,255,0.1)', 
-              backdropFilter: 'blur(10px)',
-              borderRadius: '20px', 
-              padding: '25px',
-              border: '1px solid rgba(255,255,255,0.2)'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h2 style={{ color: 'white', fontSize: '1.8rem', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  👥 Assistiti ({assistiti.length})
-                </h2>
-                <button 
-                  onClick={() => setShowForm(!showForm)}
-                  style={{
-                    background: '#10B981',
-                    color: 'white',
-                    border: 'none',
-                    padding: '10px 20px',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    fontWeight: 'bold'
-                  }}
-                >
-                  + Aggiungi
-                </button>
-              </div>
-
-              {/* Form nuovo assistito */}
-              {showForm && (
-                <form onSubmit={handleAddAssistito} style={{ 
-                  background: 'rgba(0,0,0,0.2)', 
-                  padding: '20px', 
-                  borderRadius: '10px', 
-                  marginBottom: '20px' 
-                }}>
-                  <div style={{ display: 'grid', gap: '15px' }}>
-                    <input
-                      type="text"
-                      placeholder="Nome *"
-                      value={newAssistito.nome}
-                      onChange={(e) => setNewAssistito(prev => ({ ...prev, nome: e.target.value }))}
-                      required
-                      style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Cognome *"
-                      value={newAssistito.cognome}
-                      onChange={(e) => setNewAssistito(prev => ({ ...prev, cognome: e.target.value }))}
-                      required
-                      style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Codice Fiscale *"
-                      value={newAssistito.codice_fiscale}
-                      onChange={(e) => setNewAssistito(prev => ({ ...prev, codice_fiscale: e.target.value }))}
-                      required
-                      maxLength="16"
-                      style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <input
-                      type="tel"
-                      placeholder="Telefono"
-                      value={newAssistito.telefono_principale}
-                      onChange={(e) => setNewAssistito(prev => ({ ...prev, telefono_principale: e.target.value }))}
-                      style={{
-                        padding: '12px',
-                        borderRadius: '8px',
-                        border: '1px solid rgba(255,255,255,0.3)',
-                        background: 'rgba(255,255,255,0.1)',
-                        color: 'white',
-                        fontSize: '1rem'
-                      }}
-                    />
-                    <div style={{ display: 'flex', gap: '10px' }}>
-                      <button type="submit" style={{
-                        background: '#10B981',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontWeight: 'bold',
-                        flex: 1
-                      }}>
-                        ✅ Salva
-                      </button>
-                      <button type="button" onClick={() => setShowForm(false)} style={{
-                        background: '#6B7280',
-                        color: 'white',
-                        border: 'none',
-                        padding: '12px 24px',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        flex: 1
-                      }}>
-                        Annulla
-                      </button>
-                    </div>
-                  </div>
-                </form>
-              )}
-
-              {/* Lista assistiti */}
-              <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                {assistiti.length === 0 ? (
-                  <div style={{ 
-                    textAlign: 'center', 
-                    color: 'rgba(255,255,255,0.7)', 
-                    padding: '40px 20px',
-                    background: 'rgba(0,0,0,0.1)',
-                    borderRadius: '10px'
-                  }}>
-                    <p style={{ fontSize: '1.2rem', margin: 0 }}>Nessun assistito presente</p>
-                    <p style={{ fontSize: '0.9rem', margin: '10px 0 0 0' }}>Clicca "Aggiungi" per inserire il primo assistito</p>
-                  </div>
-                ) : (
-                  assistiti.map(assistito => (
-                    <div key={assistito.id} style={{ 
-                      background: 'rgba(255,255,255,0.1)', 
-                      borderRadius: '10px', 
-                      padding: '15px', 
-                      marginBottom: '10px',
-                      border: '1px solid rgba(255,255,255,0.1)'
-                    }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <h3 style={{ color: 'white', margin: '0 0 5px 0', fontSize: '1.1rem' }}>
-                            {assistito.nome} {assistito.cognome}
-                          </h3>
-                          <p style={{ color: 'rgba(255,255,255,0.7)', margin: 0, fontSize: '0.9rem' }}>
-                            CF: {assistito.codice_fiscale}
-                          </p>
-                          {assistito.telefono_principale && (
-                            <p style={{ color: 'rgba(255,255,255,0.7)', margin: '2px 0 0 0', fontSize: '0.8rem' }}>
-                              📞 {assistito.telefono_principale}
-                            </p>
-                          )}
-                          <p style={{ color: 'rgba(255,255,255,0.5)', margin: '5px 0 0 0', fontSize: '0.7rem' }}>
-                            Inserito: {new Date(assistito.created_at).toLocaleDateString('it-IT')}
-                          </p>
-                        </div>
-                        <button 
-                          onClick={() => handleDeleteAssistito(assistito.id)}
-                          style={{
-                            background: '#EF4444',
-                            color: 'white',
-                            border: 'none',
-                            padding: '8px 12px',
-                            borderRadius: '6px',
-                            cursor: 'pointer',
-                            fontSize: '0.8rem'
-                          }}
-                        >
-                          🗑️
-                        </button>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
+          </>
         )}
 
-        {/* Footer */}
+        {/* === FOOTER TECNICO === */}
         <div style={{ 
           textAlign: 'center', 
-          marginTop: '40px', 
+          marginTop: '50px', 
           color: 'rgba(255,255,255,0.6)',
           fontSize: '0.9rem'
         }}>
-          <p>🚀 Piattaforma sviluppata con Context Engineering</p>
-          <p>💾 Dati persistenti su Supabase • 🌐 Deploy automatico Vercel • 📱 Mobile ready</p>
+          <p>🚀 Sviluppato con Context Engineering • React + Supabase + Vercel</p>
+          <p>💾 Database persistente • 🔄 Deploy automatico • 📱 Mobile responsive</p>
+          <p style={{ fontSize: '0.8rem', marginTop: '10px' }}>
+            Ultimo aggiornamento: {new Date().toLocaleDateString('it-IT')} • Versione MVP 1.0
+          </p>
         </div>
       </div>
 
-      {/* CSS Animation */}
+      {/* === CSS ANIMATIONS === */}
       <style jsx>{`
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
-        }
-        
-        input::placeholder {
-          color: rgba(255,255,255,0.5);
-        }
-        
-        button:hover {
-          transform: translateY(-2px);
-          transition: all 0.2s ease;
         }
       `}</style>
     </div>
